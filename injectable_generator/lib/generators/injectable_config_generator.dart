@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:collection/collection.dart';
@@ -23,7 +23,7 @@ import 'package:injectable_generator/utils.dart';
 class InjectableConfigGenerator extends GeneratorForAnnotation<InjectableInit> {
   @override
   dynamic generateForAnnotatedElement(
-      Element2 element, ConstantReader annotation, BuildStep buildStep) async {
+      Element element, ConstantReader annotation, BuildStep buildStep) async {
     final generateForDir = annotation
         .read('generateForDir')
         .listValue
@@ -212,9 +212,9 @@ class InjectableConfigGenerator extends GeneratorForAnnotation<InjectableInit> {
             final typeValue = reader.read('module').typeValue;
             final scope = reader.peek('scope')?.stringValue;
             throwIf(
-              typeValue.element3 is! ClassElement2 ||
-                  !TypeChecker.fromRuntime(MicroPackageModule)
-                      .isSuperOf(typeValue.element3!),
+              typeValue.element is! ClassElement ||
+                  !TypeChecker.typeNamed(MicroPackageModule)
+                      .isSuperOf(typeValue.element!),
               'ExternalPackageModule must be a class that extends MicroPackageModule',
             );
             return ExternalModuleConfig(
@@ -232,9 +232,9 @@ class InjectableConfigGenerator extends GeneratorForAnnotation<InjectableInit> {
           (e) {
             final typeValue = e.toTypeValue()!;
             throwIf(
-              typeValue.element3 is! ClassElement2 ||
-                  !TypeChecker.fromRuntime(MicroPackageModule)
-                      .isSuperOf(typeValue.element3!),
+              typeValue.element is! ClassElement ||
+                  !TypeChecker.typeNamed(MicroPackageModule)
+                      .isSuperOf(typeValue.element!),
               'ExternalPackageModule must be a class that extends MicroPackageModule',
             );
             return ExternalModuleConfig(typeResolver.resolveType(typeValue));
